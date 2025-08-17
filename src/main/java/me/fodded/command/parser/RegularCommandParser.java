@@ -45,13 +45,15 @@ public class RegularCommandParser implements CommandParser {
         Map<String, ParsedCommandArgument<?>> arguments = new HashMap<>();
 
         int index = 0;
-        String serializedArguments = content.substring(iteratedWordsLength + 1);
+        String serializedArguments = content.substring(iteratedWordsLength);
+        iteratedWordsLength = 0;
         for (String argument : serializedArguments.split(" ")) {
             if (index + 1 > requiredArguments.size()) break;
+            iteratedWordsLength += argument.length() + " ".length();
 
             CommandArgument requiredArgument = requiredArguments.get(index++);
             if (requiredArgument.type() == CommandArgumentType.TEXT) {
-                ParsedCommandArgument<?> parsedArgument = argumentParser.parse(requiredArgument, serializedArguments);
+                ParsedCommandArgument<?> parsedArgument = argumentParser.parse(requiredArgument, serializedArguments.substring(iteratedWordsLength));
                 arguments.put(requiredArgument.name(), parsedArgument);
                 break;
             }

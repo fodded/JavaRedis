@@ -1,7 +1,9 @@
 package me.fodded.command;
 
 import me.fodded.command.content.RedisCommandContent;
+import me.fodded.command.impl.GetCommand;
 import me.fodded.command.impl.PingCommand;
+import me.fodded.command.impl.SetCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,6 +20,8 @@ public class RedisCommandRegistry {
 
     private void registerDefaults() {
         register(new PingCommand());
+        register(new GetCommand());
+        register(new SetCommand());
     }
 
     public void register(@NotNull RedisCommand command) {

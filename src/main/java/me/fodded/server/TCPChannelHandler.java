@@ -30,7 +30,7 @@ public class TCPChannelHandler extends SimpleChannelInboundHandler<String> {
         commandExecutor.execute(commandContent, commandResponse);
 
         log.info(message + " " + ctx.channel().remoteAddress());
-        ctx.channel().writeAndFlush("Thanks\n");
+        ctx.channel().writeAndFlush("\n");
     }
 
     @Override
