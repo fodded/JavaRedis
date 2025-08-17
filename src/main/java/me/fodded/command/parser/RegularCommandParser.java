@@ -1,5 +1,7 @@
 package me.fodded.command.parser;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import me.fodded.command.RedisCommandRegistry;
 import me.fodded.command.argument.CommandArgument;
 import me.fodded.command.argument.CommandArgumentType;
@@ -10,17 +12,27 @@ import me.fodded.command.content.RedisCommandContent;
 import me.fodded.command.exception.ParseCommandException;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class RegularCommandParser implements CommandParser {
+
+    private final LoadingCache<String, ParsedCommand> CACHE = Caffeine.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(15))
+            .build(this::parseCommand);
 
     private final RedisCommandRegistry commandRegistry = new RedisCommandRegistry();
     private final CommandArgumentParser argumentParser = new RegularCommandArgumentParser();
 
     @Override
     public @NotNull ParsedCommand parse(@NotNull String content) {
+        return Objects.requireNonNull(CACHE.get(content));
+    }
+
+    private @NotNull ParsedCommand parseCommand(@NotNull String content) {
         RedisCommandContent parsedCommand = null;
         int iteratedWordsLength = 0;
         for (String word : content.split(" ")) {
